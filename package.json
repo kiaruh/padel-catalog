@@ -12,6 +12,8 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^6.4.7"
+    "@astrojs/partytown": "^2.1.7",
+    "astro": "^6.4.7",
+    "three": "^0.184.0"
   }
 }

@@ -1,0 +1,57 @@
+---
+const GA_ID = import.meta.env.PUBLIC_GA_ID || 'G-XXXXXXXXXX'; // Fallback for dev if not set
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Minipadel Catalog</title>
+  
+  {import.meta.env.PROD && GA_ID && (
+    <>
+      <script type="text/partytown" src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}></script>
+      <script type="text/partytown" define:vars={{ GA_ID }}>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){ dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', GA_ID);
+      </script>
+    </>
+  )}
+  
+  <style>
+    :root {
+      --accent: #1574d4;
+      --ink: #0c1a2b;
+      --paper: #eaeef3;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: var(--paper);
+      color: var(--ink);
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    header {
+      background: #fff;
+      padding: 1rem 2rem;
+      border-bottom: 1px solid #ccc;
+    }
+    h1 { margin: 0; color: var(--accent); }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>MINIPÁDEL - Catalog</h1>
+  </header>
+  <main class="container">
+    <slot />
+  </main>
+</body>
+</html>
