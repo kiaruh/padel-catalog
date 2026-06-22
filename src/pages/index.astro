@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import ModelViewer from '../components/ModelViewer.astro';
 ---
 <Layout>
+  <link rel="stylesheet" href="/fonts.css">
   <style is:inline>
     :root{
       --accent:#1574d4;
@@ -347,7 +348,7 @@ import ModelViewer from '../components/ModelViewer.astro';
         <div style="display:flex;justify-content:space-between;padding:10px 14px;border-bottom:1px solid rgba(120,180,255,.2);font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:#54a8f0;text-transform:uppercase;">
           <span>Modelo 3D — PM-01</span><span>Arrastrar · Zoom · Rotar</span>
         </div>
-        <ModelViewer src="/models/5a45995c-9ede-4062-99c8-10d598352fab.glb" />
+        <model-viewer src="/models/5a45995c-9ede-4062-99c8-10d598352fab.glb" camera-controls="true" camera-orbit="40deg 68deg auto" shadow-intensity="0.9" exposure="1.05" interaction-prompt="none" alt="Modelo 3D del sistema modular de mini pádel" style="width:100%;height:580px;background:transparent;display:block;"></model-viewer>
       </div>
       <p style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#7e93a9;margin:18px 0 0;letter-spacing:.04em;line-height:1.6;">↳ Modelo: MINI PADEL · GLB desde SolidWorks. Arrastrá para orbitar, rueda/pellizco para zoom.</p>
     </div>
@@ -439,6 +440,7 @@ import ModelViewer from '../components/ModelViewer.astro';
 
 </div>
 
+<script is:inline type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
 <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script is:inline>
   document.addEventListener('DOMContentLoaded', () => {
