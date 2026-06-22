@@ -1,19 +1,542 @@
 ---
-import { getCollection } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
-
-const products = await getCollection('products');
+import ModelViewer from '../components/ModelViewer.astro';
 ---
-
 <Layout>
-  <h2>Products Catalog</h2>
-  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem;">
-    {products.map(product => (
-      <div style="background: white; padding: 1rem; border-radius: 8px; border: 1px solid #ccc;">
-        <h3><a href={`/products/${product.id}`} style="text-decoration: none; color: var(--accent);">{product.data.title}</a></h3>
-        <p>SKU: <strong>{product.data.sku}</strong></p>
-        <p>{product.body.slice(0, 100)}...</p>
-      </div>
-    ))}
+  <style is:inline>
+    :root{
+      --accent:#1574d4;
+      --accent-deep:#0d56a3;
+      --ink:#0c1a2b;
+      --ink-2:#42566c;
+      --paper:#eaeef3;
+      --line:rgba(21,116,212,.16);
+      --line-dark:rgba(120,180,255,.13);
+    }
+    html{scroll-behavior:smooth;}
+    body{margin:0;background:#0c1a2b;}
+    ::selection{background:#1574d4;color:#fff;}
+  </style>
+  
+  <script is:inline>
+    import { trackClick } from '../scripts/track.js';
+    window.trackClick = trackClick;
+  </script>
+
+  
+
+
+
+<div style="--accent:{{ accent }};font-family:'IBM Plex Sans',system-ui,sans-serif;color:var(--ink);background:var(--paper);min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden;">
+
+  
+
+  <!-- TOP BAR -->
+  <div style="position:sticky;top:0;z-index:50;background:rgba(234,238,243,.82);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);">
+    <div style="max-width:1200px;margin:0 auto;padding:13px 48px;display:flex;justify-content:space-between;align-items:center;font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;">
+      <div style="display:flex;align-items:center;gap:12px;color:var(--ink);font-weight:600;"><span style="width:9px;height:9px;background:var(--accent);display:inline-block;"></span>MINIPÁDEL — Dossier técnico</div>
+      <div style="color:var(--ink-2);">PM-01 · v0.1 · Confidencial</div>
+    </div>
   </div>
+
+  <!-- 00 · PORTADA -->
+  <section data-screen-label="00 Portada" style="background-color:var(--paper);background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:28px 28px;border-bottom:1px solid var(--line);">
+    <div style="max-width:1200px;margin:0 auto;padding:96px 48px 104px;display:grid;grid-template-columns:1.05fr .95fr;gap:64px;align-items:center;">
+      <div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.24em;color:var(--accent);font-weight:600;text-transform:uppercase;margin-bottom:22px;">Sistema modular de mini pádel infantil</div>
+        <h1 style="font-size:92px;line-height:.92;letter-spacing:-.03em;font-weight:700;margin:0;color:var(--ink);">MINIPÁDEL</h1>
+        <div style="display:flex;align-items:center;gap:14px;margin:20px 0 30px;">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.18em;color:#fff;background:var(--accent);padding:5px 11px;">PROYECTO PM-01</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.12em;color:var(--ink-2);">Dossier para proveedores</span>
+        </div>
+        <p style="font-size:19px;line-height:1.62;color:var(--ink-2);margin:0 0 18px;max-width:540px;">Sistema modular que transforma patios escolares y espacios deportivos en canchas de pádel adaptadas para niños de 5 a 10 años.</p>
+        <p style="font-size:17px;line-height:1.62;color:var(--ink-2);margin:0;max-width:540px;">Paneles de policarbonato y marcos de polímero resistente con encastres y cierres rápidos: armado sin herramientas por una o dos personas. Una solución segura, transportable y escalable.</p>
+      </div>
+      <div>
+        <figure style="margin:0;border:1px solid var(--accent);background:#fff;box-shadow:0 24px 60px -28px rgba(12,26,43,.5);">
+          <div style="display:flex;justify-content:space-between;padding:9px 13px;border-bottom:1px solid var(--line);font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--accent);text-transform:uppercase;">
+            <span>FIG.01 — Conjunto general</span><span>Render CAD</span>
+          </div>
+          <img src="/renders/4638e518-dd6b-44a3-9b08-d8e7176211d1.jpg" alt="Render del sistema modular de mini pádel" style="display:block;width:100%;height:auto;">
+        </figure>
+      </div>
+    </div>
+    <!-- spec strip -->
+    <div style="max-width:1200px;margin:0 auto;padding:0 48px 64px;">
+      <div style="display:flex;flex-wrap:wrap;border:1px solid var(--line);background:#fff;">
+        <div style="flex:1;min-width:200px;padding:20px 24px;border-right:1px solid var(--line);">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.18em;color:var(--accent);text-transform:uppercase;margin-bottom:7px;">Edad objetivo</div>
+          <div style="font-size:17px;font-weight:600;color:var(--ink);">5 – 10 años</div>
+        </div>
+        <div style="flex:1;min-width:200px;padding:20px 24px;border-right:1px solid var(--line);">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.18em;color:var(--accent);text-transform:uppercase;margin-bottom:7px;">Armado</div>
+          <div style="font-size:17px;font-weight:600;color:var(--ink);">Sin herramientas</div>
+        </div>
+        <div style="flex:1;min-width:200px;padding:20px 24px;border-right:1px solid var(--line);">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.18em;color:var(--accent);text-transform:uppercase;margin-bottom:7px;">Material</div>
+          <div style="font-size:17px;font-weight:600;color:var(--ink);">Policarbonato + polímero</div>
+        </div>
+        <div style="flex:1;min-width:200px;padding:20px 24px;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.18em;color:var(--accent);text-transform:uppercase;margin-bottom:7px;">Logística</div>
+          <div style="font-size:17px;font-weight:600;color:var(--ink);">Transportable y escalable</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 01 · CONTEXTO DE USO -->
+  <section data-screen-label="01 Contexto" style="background:#fff;border-bottom:1px solid var(--line);">
+    <div style="max-width:1200px;margin:0 auto;padding:104px 48px;">
+      <div style="margin-bottom:48px;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.22em;color:var(--accent);font-weight:600;margin-bottom:14px;text-transform:uppercase;">Sección 01 / 08</div>
+        <h2 style="font-size:42px;line-height:1.04;letter-spacing:-.02em;margin:0 0 16px;color:var(--ink);font-weight:700;">Contexto de uso</h2>
+        <p style="max-width:700px;font-size:18px;line-height:1.6;color:var(--ink-2);margin:0;">Pensado para instalarse y retirarse sobre superficies existentes —patios, gimnasios, playones— sin obra civil. Se adapta al espacio disponible sumando o quitando módulos.</p>
+      </div>
+      <figure style="margin:0 0 56px;border:1px solid var(--accent);background:#fff;">
+        <div style="display:flex;justify-content:space-between;padding:9px 13px;border-bottom:1px solid var(--line);font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--accent);text-transform:uppercase;">
+          <span>FIG.02 — Implantación en patio escolar</span><span>Visualización en contexto</span>
+        </div>
+        <img src="/renders/330da32d-f1b3-4f62-9534-6201e31b54fc.jpg" alt="Sistema instalado en patio de escuela" style="display:block;width:100%;height:auto;">
+      </figure>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:1px solid var(--line);">
+        <div style="padding:30px 28px;border-right:1px solid var(--line);">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--accent);font-weight:600;margin-bottom:14px;">A·01</div>
+          <h3 style="font-size:21px;margin:0 0 10px;color:var(--ink);font-weight:600;">Escuelas</h3>
+          <p style="font-size:15.5px;line-height:1.6;color:var(--ink-2);margin:0;">Convierte el recreo y la clase de educación física en juego de pádel. Se guarda desarmado cuando no se usa.</p>
+        </div>
+        <div style="padding:30px 28px;border-right:1px solid var(--line);">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--accent);font-weight:600;margin-bottom:14px;">A·02</div>
+          <h3 style="font-size:21px;margin:0 0 10px;color:var(--ink);font-weight:600;">Clubes</h3>
+          <p style="font-size:15.5px;line-height:1.6;color:var(--ink-2);margin:0;">Escuela de iniciación y captación temprana. Cancha reducida para entrenar técnica en grupos chicos.</p>
+        </div>
+        <div style="padding:30px 28px;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--accent);font-weight:600;margin-bottom:14px;">A·03</div>
+          <h3 style="font-size:21px;margin:0 0 10px;color:var(--ink);font-weight:600;">Espacios recreativos</h3>
+          <p style="font-size:15.5px;line-height:1.6;color:var(--ink-2);margin:0;">Plazas, centros deportivos y eventos. Montaje rápido para activaciones temporales y ferias.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 · PLANOS TÉCNICOS -->
+  <section data-screen-label="02 Planos" style="background-color:#0a1422;background-image:linear-gradient(var(--line-dark) 1px,transparent 1px),linear-gradient(90deg,var(--line-dark) 1px,transparent 1px);background-size:40px 40px;color:#dce6f2;border-bottom:1px solid var(--line);">
+    <div style="max-width:1200px;margin:0 auto;padding:104px 48px;">
+      <div style="margin-bottom:52px;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.22em;color:#54a8f0;font-weight:600;margin-bottom:14px;text-transform:uppercase;">Sección 02 / 08</div>
+        <h2 style="font-size:42px;line-height:1.04;letter-spacing:-.02em;margin:0 0 16px;color:#fff;font-weight:700;">Planos técnicos</h2>
+        <p style="max-width:720px;font-size:18px;line-height:1.6;color:#9fb3c9;margin:0;">Despiece de los seis perfiles y paneles que componen el sistema. Cotas en milímetros. Todos los perfiles comparten una sección base de pared 6–8 mm con ranura de 12 mm para alojar el panel.</p>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:28px;">
+
+        <!-- BASE INFERIOR -->
+        <figure style="margin:0;border:1px solid rgba(120,180,255,.3);background:#fff;color:var(--ink);">
+          <div style="display:flex;justify-content:space-between;padding:9px 13px;border-bottom:1px solid var(--line);font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.13em;color:var(--accent);text-transform:uppercase;">
+            <span>Plano 01 · PM-01-A</span><a href="/manuals/2f1cbe6b-b710-4b34-9a45-462d48c10a1c.pdf" download onclick="trackClick('pdf_download', 'base-inferior')" target="_blank" rel="noopener" style="color:#fff;background:var(--accent);padding:3px 9px;text-decoration:none;letter-spacing:.1em;" style-hover="background:var(--accent-deep);">VER PDF ↗</a>
+          </div>
+          <div style="height:300px;display:flex;align-items:center;justify-content:center;padding:18px;"><img src="/renders/62a7b9f9-d0f5-4857-bc02-198efc588e13.png" alt="Plano base inferior" style="max-width:100%;max-height:100%;object-fit:contain;"></div>
+          <div style="display:grid;grid-template-columns:1.4fr 1fr;border-top:1px solid var(--line);font-family:'IBM Plex Mono',monospace;font-size:11px;">
+            <div style="padding:11px 14px;border-right:1px solid var(--line);"><span style="color:var(--accent);display:block;font-size:9.5px;letter-spacing:.14em;margin-bottom:3px;">DENOMINACIÓN</span>BASE INFERIOR</div>
+            <div style="padding:11px 14px;"><span style="color:var(--accent);display:block;font-size:9.5px;letter-spacing:.14em;margin-bottom:3px;">DIM. PRINCIPAL</span>1000 · 300×249</div>
+          </div>
+        </figure>
+
+        <!-- BASE SUPERIOR 900 -->
+        <figure style="margin:0;border:1px solid rgba(120,180,255,.3);background:#fff;color:var(--ink);">
+          <div style="display:flex;justify-content:space-between;padding:9px 13px;border-bottom:1px solid var(--line);font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.13em;color:var(--accent);text-transform:uppercase;">
+            <span>Plano 02 · PM-01-B</span><a href="/manuals/ab8eca23-5b27-4da7-a0a0-b09c3ddbcc2d.pdf" download onclick="trackClick('pdf_download', 'base-superior-900')" target="_blank" rel="noopener" style="color:#fff;background:var(--accent);padding:3px 9px;text-decoration:none;letter-spacing:.1em;" style-hover="background:var(--accent-deep);">VER PDF ↗</a>
+          </div>
+          <div style="height:300px;display:flex;align-items:center;justify-content:center;padding:18px;"><img src="/renders/919b8b88-84d9-4902-90af-e92db420c72d.png" alt="Plano base superior 900" style="max-width:100%;max-height:100%;object-fit:contain;"></div>
+          <div style="display:grid;grid-template-columns:1.4fr 1fr;border-top:1px solid var(--line);font-family:'IBM Plex Mono',monospace;font-size:11px;">
+            <div style="padding:11px 14px;border-right:1px solid var(--line);"><span style="color:var(--accent);display:block;font-size:9.5px;letter-spacing:.14em;margin-bottom:3px;">DENOMINACIÓN</span>BASE SUPERIOR</div>
+            <div style="padding:11px 14px;"><span style="color:var(--accent);display:block;font-size:9.5px;letter-spacing:.14em;margin-bottom:3px;">DIM. PRINCIPAL</span>900 · 136×80</div>
+          </div>
+        </figure>
+
+        <!-- BASE SUPERIOR REMATE 600 -->
+        <figure style="margin:0;border:1px solid rgba(120,180,255,.3);background:#fff;color:var(--ink);">
+          <div style="display:flex;justify-content:space-between;padding:9px 13px;border-bottom:1px solid var(--line);font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.13em;color:var(--accent);text-transform:uppercase;">
+            <span>Plano 03 · PM-01-B2</span><a href="/manuals/f747ecec-8e56-494d-8081-a941f2fad06d.pdf" download onclick="trackClick('pdf_download', 'base-superior-remate-600')" target="_blank" rel="noopener" style="color:#fff;background:var(--accent);padding:3px 9px;text-decoration:none;letter-spacing:.1em;" style-hover="background:var(--accent-deep);">VER PDF ↗</a>
+          </div>
+          <div style="height:300px;display:flex;align-items:center;justify-content:center;padding:18px;"><img src="/renders/9f0ed017-269e-4481-b07c-baaef0a6a029.png" alt="Plano base superior remate 600" style="max-width:100%;max-height:100%;object-fit:contain;"></div>
+          <div style="display:grid;grid-template-columns:1.4fr 1fr;border-top:1px solid var(--line);font-family:'IBM Plex Mono',monospace;font-size:11px;">
+            <div style="padding:11px 14px;border-right:1px solid var(--line);"><span style="color:var(--accent);display:block;font-size:9.5px;letter-spacing:.14em;margin-bottom:3px;">DENOMINACIÓN</span>BASE SUP. (REMATE)</div>
+            <div style="padding:11px 14px;"><span style="color:var(--accent);display:block;font-size:9.5px;letter-spacing:.14em;margin-bottom:3px;">DIM. PRINCIPAL</span>600 · 136×80</div>
+          </div>
+        </figure>
+
+        <!-- ESQUINERO -->
+        <figure style="margin:0;border:1px solid rgba(120,180,255,.3);background:#fff;color:var(--ink);">
+          <div style="display:flex;justify-content:space-between;padding:9px 13px;border-bottom:1px solid var(--line);font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.13em;color:var(--accent);text-transform:uppercase;">
+            <span>Plano 04 · PM-01-C</span><a href="/manuals/a8d61fd0-d66e-462c-bbd2-3670bfc74a53.pdf" download onclick="trackClick('pdf_download', 'esquinero')" target="_blank" rel="noopener" style="color:#fff;background:var(--accent);padding:3px 9px;text-decoration:none;letter-spacing:.1em;" style-hover="background:var(--accent-deep);">VER PDF ↗</a>
+          </div>
+          <div style="height:300px;display:flex;align-items:center;justify-content:center;padding:18px;"><img src="/renders/ac8fe109-fefe-4c99-bded-9fcbca82298a.png" alt="Plano esquinero" style="max-width:100%;max-height:100%;object-fit:contain;"></div>
+          <div style="display:grid;grid-template-columns:1.4fr 1fr;border-top:1px solid var(--line);font-family:'IBM Plex Mono',monospace;font-size:11px;">
+            <div style="padding:11px 14px;border-right:1px solid var(--line);"><span style="color:var(--accent);display:block;font-size:9.5px;letter-spacing:.14em;margin-bottom:3px;">DENOMINACIÓN</span>ESQUINERO</div>
+            <div style="padding:11px 14px;"><span style="color:var(--accent);display:block;font-size:9.5px;letter-spacing:.14em;margin-bottom:3px;">DIM. PRINCIPAL</span>750×750 · 79×136</div>
+          </div>
+        </figure>
+
+        <!-- PANEL PRINCIPAL -->
+        <figure style="margin:0;border:1px solid rgba(120,180,255,.3);background:#fff;color:var(--ink);">
+          <div style="display:flex;justify-content:space-between;padding:9px 13px;border-bottom:1px solid var(--line);font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.13em;color:var(--accent);text-transform:uppercase;">
+            <span>Plano 05 · PM-01-D</span><a href="/manuals/3a4bbf46-69fe-47a4-9e2c-58e3fab09888.pdf" download onclick="trackClick('pdf_download', 'panel-principal')" target="_blank" rel="noopener" style="color:#fff;background:var(--accent);padding:3px 9px;text-decoration:none;letter-spacing:.1em;" style-hover="background:var(--accent-deep);">VER PDF ↗</a>
+          </div>
+          <div style="height:300px;display:flex;align-items:center;justify-content:center;padding:18px;"><img src="/renders/f5daa8c9-6ef3-4064-872e-261d78f864ab.png" alt="Plano panel principal" style="max-width:100%;max-height:100%;object-fit:contain;"></div>
+          <div style="display:grid;grid-template-columns:1.4fr 1fr;border-top:1px solid var(--line);font-family:'IBM Plex Mono',monospace;font-size:11px;">
+            <div style="padding:11px 14px;border-right:1px solid var(--line);"><span style="color:var(--accent);display:block;font-size:9.5px;letter-spacing:.14em;margin-bottom:3px;">DENOMINACIÓN</span>PANEL PRINCIPAL</div>
+            <div style="padding:11px 14px;"><span style="color:var(--accent);display:block;font-size:9.5px;letter-spacing:.14em;margin-bottom:3px;">DIM. PRINCIPAL</span>1000×1308 · e12</div>
+          </div>
+        </figure>
+
+        <!-- PANEL REJA -->
+        <figure style="margin:0;border:1px solid rgba(120,180,255,.3);background:#fff;color:var(--ink);">
+          <div style="display:flex;justify-content:space-between;padding:9px 13px;border-bottom:1px solid var(--line);font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.13em;color:var(--accent);text-transform:uppercase;">
+            <span>Plano 06 · PM-01-E</span><a href="/manuals/00b92423-a875-4831-8aa1-bb02514cf361.pdf" download onclick="trackClick('pdf_download', 'panel-reja')" target="_blank" rel="noopener" style="color:#fff;background:var(--accent);padding:3px 9px;text-decoration:none;letter-spacing:.1em;" style-hover="background:var(--accent-deep);">VER PDF ↗</a>
+          </div>
+          <div style="height:300px;display:flex;align-items:center;justify-content:center;padding:18px;"><img src="/renders/ac68b246-32c5-48f0-b471-dcc388c990ce.png" alt="Plano panel reja" style="max-width:100%;max-height:100%;object-fit:contain;"></div>
+          <div style="display:grid;grid-template-columns:1.4fr 1fr;border-top:1px solid var(--line);font-family:'IBM Plex Mono',monospace;font-size:11px;">
+            <div style="padding:11px 14px;border-right:1px solid var(--line);"><span style="color:var(--accent);display:block;font-size:9.5px;letter-spacing:.14em;margin-bottom:3px;">DENOMINACIÓN</span>PANEL REJA</div>
+            <div style="padding:11px 14px;"><span style="color:var(--accent);display:block;font-size:9.5px;letter-spacing:.14em;margin-bottom:3px;">DIM. PRINCIPAL</span>1000×1308 · malla hex.</div>
+          </div>
+        </figure>
+
+      </div>
+      <p style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#7e93a9;margin:32px 0 0;letter-spacing:.04em;">↳ Planos completos en PDF (CAD) disponibles a pedido — directorio /planos/.</p>
+    </div>
+  </section>
+
+  <!-- 03 · RENDERS -->
+  <section data-screen-label="03 Renders" style="background:var(--paper);border-bottom:1px solid var(--line);">
+    <div style="max-width:1200px;margin:0 auto;padding:104px 48px;">
+      <div style="margin-bottom:48px;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.22em;color:var(--accent);font-weight:600;margin-bottom:14px;text-transform:uppercase;">Sección 03 / 08</div>
+        <h2 style="font-size:42px;line-height:1.04;letter-spacing:-.02em;margin:0 0 16px;color:var(--ink);font-weight:700;">Renders</h2>
+        <p style="max-width:700px;font-size:18px;line-height:1.6;color:var(--ink-2);margin:0;">Vistas del conjunto armado: cerramiento inferior macizo, franja superior de reja y aberturas laterales de acceso.</p>
+      </div>
+      <figure style="margin:0 0 28px;border:1px solid var(--accent);background:#fff;">
+        <div style="display:flex;justify-content:space-between;padding:9px 13px;border-bottom:1px solid var(--line);font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--accent);text-transform:uppercase;">
+          <span>FIG.03 — Vista de módulo en perspectiva</span><span>Render CAD</span>
+        </div>
+        <img src="/renders/77465422-07db-4e47-bbcf-9dbe438a6755.png" alt="Render del módulo en perspectiva" style="display:block;width:100%;height:auto;background:#fff;">
+      </figure>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:28px;">
+        <figure style="margin:0;border:1px solid var(--accent);background:#fff;">
+          <div style="display:flex;justify-content:space-between;padding:9px 13px;border-bottom:1px solid var(--line);font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--accent);text-transform:uppercase;">
+            <span>FIG.04 — Conjunto completo</span><span>Render CAD</span>
+          </div>
+          <img src="/renders/4638e518-dd6b-44a3-9b08-d8e7176211d1.jpg" alt="Render conjunto completo" style="display:block;width:100%;height:auto;">
+        </figure>
+        <figure style="margin:0;border:1px solid var(--accent);background:#fff;">
+          <div style="display:flex;justify-content:space-between;padding:9px 13px;border-bottom:1px solid var(--line);font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--accent);text-transform:uppercase;">
+            <span>FIG.05 — En contexto</span><span>Visualización</span>
+          </div>
+          <img src="/renders/330da32d-f1b3-4f62-9534-6201e31b54fc.jpg" alt="Render en contexto" style="display:block;width:100%;height:auto;">
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 · DETALLES DEL PRODUCTO -->
+  <section data-screen-label="04 Detalles" style="background:#fff;border-bottom:1px solid var(--line);">
+    <div style="max-width:1200px;margin:0 auto;padding:104px 48px;">
+      <div style="margin-bottom:48px;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.22em;color:var(--accent);font-weight:600;margin-bottom:14px;text-transform:uppercase;">Sección 04 / 08</div>
+        <h2 style="font-size:42px;line-height:1.04;letter-spacing:-.02em;margin:0 0 16px;color:var(--ink);font-weight:700;">Detalles del producto</h2>
+        <p style="max-width:700px;font-size:18px;line-height:1.6;color:var(--ink-2);margin:0;">Puntos clave del sistema de unión y cerramiento. Los recuadros marcados esperan fotografías macro del prototipo físico — soltá las imágenes en <span style="font-family:'IBM Plex Mono',monospace;font-size:15px;color:var(--accent);">/assets/detalles/</span>.</p>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:28px;">
+
+        <div>
+          <div style="position:relative;aspect-ratio:4/3;border:1px solid var(--accent);background:#fff;overflow:hidden;">
+            <span style="position:absolute;top:9px;left:11px;z-index:2;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;color:#fff;background:var(--accent);padding:3px 8px;text-transform:uppercase;">D-01</span>
+            <img src="/renders/fc6a76a4-2da0-49a3-8ea9-20ee35de7a84.png" alt="Cierre rápido superior" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">
+          </div>
+          <div style="margin-top:14px;"><h3 style="font-size:19px;margin:0 0 6px;color:var(--ink);font-weight:600;">Cierre rápido superior</h3><p style="font-size:15px;line-height:1.55;color:var(--ink-2);margin:0;">Clips que fijan el panel a la base superior sin herramientas; permiten armado y desarmado por una persona.</p></div>
+        </div>
+
+        <div>
+          <div style="position:relative;aspect-ratio:4/3;border:1px solid var(--accent);background:#fff;overflow:hidden;">
+            <span style="position:absolute;top:9px;left:11px;z-index:2;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;color:#fff;background:var(--accent);padding:3px 8px;text-transform:uppercase;">D-02</span>
+            <img src="/renders/1e8d15c4-8ec0-45be-8320-cd042391806c.jpg" alt="Junta de goma panel-perfil" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">
+          </div>
+          <div style="margin-top:14px;"><h3 style="font-size:19px;margin:0 0 6px;color:var(--ink);font-weight:600;">Junta de goma panel–perfil</h3><p style="font-size:15px;line-height:1.55;color:var(--ink-2);margin:0;">Ranura de 12 mm con junta elastomérica que sella el policarbonato y amortigua impactos sobre el borde.</p></div>
+        </div>
+
+        <div>
+          <div style="position:relative;aspect-ratio:4/3;border:1px solid var(--accent);background:#fff;overflow:hidden;">
+            <span style="position:absolute;top:9px;left:11px;z-index:2;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;color:#fff;background:var(--accent);padding:3px 8px;text-transform:uppercase;">D-03</span>
+            <img src="/renders/e924eba2-fd30-45cf-ac1b-34f7dcc1dc73.jpg" alt="Encastre de esquinero" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">
+          </div>
+          <div style="margin-top:14px;"><h3 style="font-size:19px;margin:0 0 6px;color:var(--ink);font-weight:600;">Encastre de esquinero</h3><p style="font-size:15px;line-height:1.55;color:var(--ink-2);margin:0;">Codo a 90° que une los lados y da rigidez al conjunto; encastra con los perfiles de base por sus extremos.</p></div>
+        </div>
+
+        <div>
+          <div style="position:relative;aspect-ratio:4/3;border:1px solid var(--accent);background:#fff;overflow:hidden;">
+            <span style="position:absolute;top:9px;left:11px;z-index:2;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;color:#fff;background:var(--accent);padding:3px 8px;text-transform:uppercase;">D-04</span>
+            <img src="/renders/29489afe-bc40-464f-9fb2-df4e71e0be8f.jpg" alt="Base inferior - sección anti-vuelco" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">
+          </div>
+          <div style="margin-top:14px;"><h3 style="font-size:19px;margin:0 0 6px;color:var(--ink);font-weight:600;">Base inferior anti-vuelco</h3><p style="font-size:15px;line-height:1.55;color:var(--ink-2);margin:0;">Perfil ancho (300 mm) con cara inclinada y borde redondeado R100 que aporta estabilidad y seguridad al pie.</p></div>
+        </div>
+
+        <div>
+          <div style="position:relative;aspect-ratio:4/3;border:1px solid var(--accent);background:#fff;overflow:hidden;">
+            <span style="position:absolute;top:9px;left:11px;z-index:2;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;color:#fff;background:var(--accent);padding:3px 8px;text-transform:uppercase;">D-05</span>
+            <img src="/renders/22e03c5d-6dc7-4134-8b74-8ea1c512fbbb.png" alt="Burlete de goma en la ranura de encastre" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">
+          </div>
+          <div style="margin-top:14px;"><h3 style="font-size:19px;margin:0 0 6px;color:var(--ink);font-weight:600;">Burlete en ranura de encastre</h3><p style="font-size:15px;line-height:1.55;color:var(--ink-2);margin:0;">Burlete de goma alojado en la ranura de las bases inferior y superior, justo donde encastra el policarbonato: fija el panel, lo sella y absorbe vibración e impacto.</p></div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 · MATERIALES Y ACABADOS -->
+  <section data-screen-label="05 Materiales" style="background:var(--paper);border-bottom:1px solid var(--line);">
+    <div style="max-width:1200px;margin:0 auto;padding:104px 48px;">
+      <div style="margin-bottom:48px;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.22em;color:var(--accent);font-weight:600;margin-bottom:14px;text-transform:uppercase;">Sección 05 / 08</div>
+        <h2 style="font-size:42px;line-height:1.04;letter-spacing:-.02em;margin:0 0 16px;color:var(--ink);font-weight:700;">Materiales y acabados</h2>
+        <p style="max-width:700px;font-size:18px;line-height:1.6;color:var(--ink-2);margin:0;">Especificación de referencia, sujeta a la recomendación del proveedor. El objetivo es reemplazar el aluminio del marco por un perfil plástico estructural.</p>
+      </div>
+      <div style="border:1px solid var(--line);background:#fff;">
+
+        <div style="display:grid;grid-template-columns:96px 1fr 1.3fr;align-items:center;border-bottom:1px solid var(--line);">
+          <div style="align-self:stretch;background:linear-gradient(135deg,rgba(120,180,255,.55),rgba(21,116,212,.18));border-right:1px solid var(--line);"></div>
+          <div style="padding:22px 26px;border-right:1px solid var(--line);"><h3 style="font-size:18px;margin:0 0 4px;color:var(--ink);font-weight:600;">Policarbonato compacto</h3><div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--accent);">e 8–12 mm</div></div>
+          <div style="padding:22px 26px;font-size:15px;line-height:1.55;color:var(--ink-2);">Paneles de cerramiento principal. Alta resistencia al impacto y a la intemperie, con tratamiento UV para uso exterior.</div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:96px 1fr 1.3fr;align-items:center;border-bottom:1px solid var(--line);">
+          <div style="align-self:stretch;background:var(--accent);border-right:1px solid var(--line);"></div>
+          <div style="padding:22px 26px;border-right:1px solid var(--line);"><h3 style="font-size:18px;margin:0 0 4px;color:var(--ink);font-weight:600;">Perfil de polímero estructural</h3><div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--accent);">pared 6–8 mm</div></div>
+          <div style="padding:22px 26px;font-size:15px;line-height:1.55;color:var(--ink-2);">Bases, remates y esquineros. Reemplazo propuesto del aluminio; color pasante para evitar pintura y desgaste.</div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:96px 1fr 1.3fr;align-items:center;border-bottom:1px solid var(--line);">
+          <div style="align-self:stretch;background:repeating-linear-gradient(60deg,#6b7785,#6b7785 4px,#8b97a5 4px,#8b97a5 8px);border-right:1px solid var(--line);"></div>
+          <div style="padding:22px 26px;border-right:1px solid var(--line);"><h3 style="font-size:18px;margin:0 0 4px;color:var(--ink);font-weight:600;">Panel reja / malla hexagonal</h3><div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--accent);">franja superior</div></div>
+          <div style="padding:22px 26px;font-size:15px;line-height:1.55;color:var(--ink-2);">Cierre superior calado que aporta visibilidad y aireación, conservando rebote en la zona baja maciza.</div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:96px 1fr 1.3fr;align-items:center;border-bottom:1px solid var(--line);">
+          <div style="align-self:stretch;background:#1a1f24;border-right:1px solid var(--line);"></div>
+          <div style="padding:22px 26px;border-right:1px solid var(--line);"><h3 style="font-size:18px;margin:0 0 4px;color:var(--ink);font-weight:600;">Junta de goma (EPDM/TPE)</h3><div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--accent);">ranura 12 mm</div></div>
+          <div style="padding:22px 26px;font-size:15px;line-height:1.55;color:var(--ink-2);">Sella el panel dentro del perfil, absorbe tolerancias y amortigua el impacto de la pelota en el borde.</div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:96px 1fr 1.3fr;align-items:center;">
+          <div style="align-self:stretch;background:linear-gradient(135deg,#c8cfd6,#9aa4ae 55%,#cfd6dd);border-right:1px solid var(--line);"></div>
+          <div style="padding:22px 26px;border-right:1px solid var(--line);"><h3 style="font-size:18px;margin:0 0 4px;color:var(--ink);font-weight:600;">Herrajes / cierres rápidos</h3><div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--accent);">sin herramientas</div></div>
+          <div style="padding:22px 26px;font-size:15px;line-height:1.55;color:var(--ink-2);">Clips y pasadores resistentes a la corrosión para armado/desarmado frecuente sin pérdida de ajuste.</div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 · PRODUCTO EN 3D -->
+  <section data-screen-label="06 3D" style="background-color:#0a1422;background-image:linear-gradient(var(--line-dark) 1px,transparent 1px),linear-gradient(90deg,var(--line-dark) 1px,transparent 1px);background-size:40px 40px;color:#dce6f2;border-bottom:1px solid var(--line);">
+    <div style="max-width:1200px;margin:0 auto;padding:104px 48px;">
+      <div style="margin-bottom:48px;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.22em;color:#54a8f0;font-weight:600;margin-bottom:14px;text-transform:uppercase;">Sección 06 / 08</div>
+        <h2 style="font-size:42px;line-height:1.04;letter-spacing:-.02em;margin:0 0 16px;color:#fff;font-weight:700;">Producto en 3D</h2>
+        <p style="max-width:720px;font-size:18px;line-height:1.6;color:#9fb3c9;margin:0;">Modelo interactivo del sistema: rotar, acercar y orbitar para inspeccionar perfiles, encastres y paneles.</p>
+      </div>
+      <div style="border:1px solid rgba(120,180,255,.3);background:rgba(255,255,255,.02);">
+        <div style="display:flex;justify-content:space-between;padding:10px 14px;border-bottom:1px solid rgba(120,180,255,.2);font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:#54a8f0;text-transform:uppercase;">
+          <span>Modelo 3D — PM-01</span><span>Arrastrar · Zoom · Rotar</span>
+        </div>
+        <ModelViewer src="/models/5a45995c-9ede-4062-99c8-10d598352fab.glb" />
+      </div>
+      <p style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#7e93a9;margin:18px 0 0;letter-spacing:.04em;line-height:1.6;">↳ Modelo: MINI PADEL · GLB desde SolidWorks. Arrastrá para orbitar, rueda/pellizco para zoom.</p>
+    </div>
+  </section>
+
+  <!-- 07 · ESPECIFICACIONES -->
+  <section data-screen-label="07 Especificaciones" style="background:#fff;border-bottom:1px solid var(--line);">
+    <div style="max-width:1200px;margin:0 auto;padding:104px 48px;">
+      <div style="margin-bottom:48px;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.22em;color:var(--accent);font-weight:600;margin-bottom:14px;text-transform:uppercase;">Sección 07 / 08</div>
+        <h2 style="font-size:42px;line-height:1.04;letter-spacing:-.02em;margin:0 0 16px;color:var(--ink);font-weight:700;">Especificaciones y dimensiones</h2>
+        <p style="max-width:700px;font-size:18px;line-height:1.6;color:var(--ink-2);margin:0;">Cotas en milímetros. El perímetro de la cancha se arma combinando perfiles de 1000, 900 y 600 mm: dimensión total configurable según el espacio.</p>
+      </div>
+      <div style="border:1px solid var(--line);overflow:hidden;">
+        <table style="width:100%;border-collapse:collapse;font-size:14.5px;">
+          <thead>
+            <tr style="background:var(--ink);color:#fff;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;">
+              <th style="text-align:left;padding:13px 18px;font-weight:600;">Pieza</th>
+              <th style="text-align:left;padding:13px 18px;font-weight:600;">Largo</th>
+              <th style="text-align:left;padding:13px 18px;font-weight:600;">Sección / Espesor</th>
+              <th style="text-align:left;padding:13px 18px;font-weight:600;">Función</th>
+              <th style="text-align:left;padding:13px 18px;font-weight:600;">Nº</th>
+            </tr>
+          </thead>
+          <tbody style="color:var(--ink-2);">
+            <tr style="border-bottom:1px solid var(--line);"><td style="padding:14px 18px;color:var(--ink);font-weight:600;">Base inferior</td><td style="padding:14px 18px;font-family:'IBM Plex Mono',monospace;">1000</td><td style="padding:14px 18px;font-family:'IBM Plex Mono',monospace;">300×249 · R100 · e6–8</td><td style="padding:14px 18px;">Base perimetral anti-vuelco</td><td style="padding:14px 18px;font-family:'IBM Plex Mono',monospace;color:var(--accent);">PM-01-A</td></tr>
+            <tr style="border-bottom:1px solid var(--line);background:#fafbfc;"><td style="padding:14px 18px;color:var(--ink);font-weight:600;">Base superior</td><td style="padding:14px 18px;font-family:'IBM Plex Mono',monospace;">900</td><td style="padding:14px 18px;font-family:'IBM Plex Mono',monospace;">136×80 · labio 20 · e6–8</td><td style="padding:14px 18px;">Remate superior + alojamiento panel</td><td style="padding:14px 18px;font-family:'IBM Plex Mono',monospace;color:var(--accent);">PM-01-B</td></tr>
+            <tr style="border-bottom:1px solid var(--line);"><td style="padding:14px 18px;color:var(--ink);font-weight:600;">Base superior (remate)</td><td style="padding:14px 18px;font-family:'IBM Plex Mono',monospace;">600</td><td style="padding:14px 18px;font-family:'IBM Plex Mono',monospace;">136×80 · e6–8</td><td style="padding:14px 18px;">Tramo de ajuste de longitud</td><td style="padding:14px 18px;font-family:'IBM Plex Mono',monospace;color:var(--accent);">PM-01-B2</td></tr>
+            <tr style="border-bottom:1px solid var(--line);background:#fafbfc;"><td style="padding:14px 18px;color:var(--ink);font-weight:600;">Esquinero</td><td style="padding:14px 18px;font-family:'IBM Plex Mono',monospace;">750×750</td><td style="padding:14px 18px;font-family:'IBM Plex Mono',monospace;">79×136 · e6–8</td><td style="padding:14px 18px;">Unión 90° entre lados</td><td style="padding:14px 18px;font-family:'IBM Plex Mono',monospace;color:var(--accent);">PM-01-C</td></tr>
+            <tr style="border-bottom:1px solid var(--line);"><td style="padding:14px 18px;color:var(--ink);font-weight:600;">Panel principal</td><td style="padding:14px 18px;font-family:'IBM Plex Mono',monospace;">1000×1308</td><td style="padding:14px 18px;font-family:'IBM Plex Mono',monospace;">útil 1150 · e12</td><td style="padding:14px 18px;">Cerramiento inferior macizo</td><td style="padding:14px 18px;font-family:'IBM Plex Mono',monospace;color:var(--accent);">PM-01-D</td></tr>
+            <tr><td style="padding:14px 18px;color:var(--ink);font-weight:600;">Panel reja</td><td style="padding:14px 18px;font-family:'IBM Plex Mono',monospace;">1000×1308</td><td style="padding:14px 18px;font-family:'IBM Plex Mono',monospace;">útil 1150 · e12</td><td style="padding:14px 18px;">Cerramiento superior calado</td><td style="padding:14px 18px;font-family:'IBM Plex Mono',monospace;color:var(--accent);">PM-01-E</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:0;border:1px solid var(--line);border-top:none;background:#fff;">
+        <div style="flex:1;min-width:220px;padding:22px 24px;border-right:1px solid var(--line);"><div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.16em;color:var(--accent);text-transform:uppercase;margin-bottom:7px;">Módulo de panel</div><div style="font-size:16px;color:var(--ink);">1000 mm de ancho · paso modular</div></div>
+        <div style="flex:1;min-width:220px;padding:22px 24px;border-right:1px solid var(--line);"><div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.16em;color:var(--accent);text-transform:uppercase;margin-bottom:7px;">Altura de cerramiento</div><div style="font-size:16px;color:var(--ink);">≈ 1308 mm (panel)</div></div>
+        <div style="flex:1;min-width:220px;padding:22px 24px;"><div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.16em;color:var(--accent);text-transform:uppercase;margin-bottom:7px;">Dimensión total</div><div style="font-size:16px;color:var(--ink);">Configurable según espacio</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 08 · PREGUNTAS PARA EL PROVEEDOR -->
+  <section data-screen-label="08 Preguntas" style="background:#0d2842;color:#dce6f2;">
+    <div style="max-width:1200px;margin:0 auto;padding:104px 48px;">
+      <div style="margin-bottom:44px;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.22em;color:#6cb6f5;font-weight:600;margin-bottom:14px;text-transform:uppercase;">Sección 08 / 08</div>
+        <h2 style="font-size:42px;line-height:1.04;letter-spacing:-.02em;margin:0 0 24px;color:#fff;font-weight:700;">Preguntas para el proveedor</h2>
+        <div style="border-left:2px solid var(--accent);padding:6px 0 6px 22px;max-width:780px;">
+          <p style="font-size:18px;line-height:1.62;color:#bcccdd;margin:0;">Estamos desarrollando un sistema modular de mini pádel infantil. Buscamos reemplazar el marco de aluminio por un perfil plástico estructural que aloje paneles de policarbonato compacto de 8–12 mm mediante una junta de goma. El sistema debe soportar impactos, uso exterior y armado/desarmado frecuente.</p>
+        </div>
+      </div>
+      <ol style="list-style:none;counter-reset:q;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid rgba(120,180,255,.2);">
+        <li style="counter-increment:q;padding:24px 26px;border-right:1px solid rgba(120,180,255,.2);border-bottom:1px solid rgba(120,180,255,.2);"><div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#6cb6f5;margin-bottom:9px;">P·01</div><p style="margin:0;font-size:15.5px;line-height:1.55;color:#cdd9e6;">¿Qué material y proceso recomiendan para el perfil estructural (PVC rígido extruido, polímero reforzado, aluminio-plástico)? ¿Es viable reemplazar el aluminio?</p></li>
+        <li style="counter-increment:q;padding:24px 26px;border-bottom:1px solid rgba(120,180,255,.2);"><div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#6cb6f5;margin-bottom:9px;">P·02</div><p style="margin:0;font-size:15.5px;line-height:1.55;color:#cdd9e6;">¿Es compatible alojar policarbonato de 8–12 mm con junta de goma en la ranura de 12 mm? ¿Qué junta sugieren (EPDM, TPE)?</p></li>
+        <li style="counter-increment:q;padding:24px 26px;border-right:1px solid rgba(120,180,255,.2);border-bottom:1px solid rgba(120,180,255,.2);"><div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#6cb6f5;margin-bottom:9px;">P·03</div><p style="margin:0;font-size:15.5px;line-height:1.55;color:#cdd9e6;">Peso aproximado por perfil y del módulo completo armado.</p></li>
+        <li style="counter-increment:q;padding:24px 26px;border-bottom:1px solid rgba(120,180,255,.2);"><div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#6cb6f5;margin-bottom:9px;">P·04</div><p style="margin:0;font-size:15.5px;line-height:1.55;color:#cdd9e6;">Costos: herramental (matriz de extrusión o molde de inyección), costo por pieza/metro y cantidad mínima (MOQ).</p></li>
+        <li style="counter-increment:q;padding:24px 26px;border-right:1px solid rgba(120,180,255,.2);border-bottom:1px solid rgba(120,180,255,.2);"><div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#6cb6f5;margin-bottom:9px;">P·05</div><p style="margin:0;font-size:15.5px;line-height:1.55;color:#cdd9e6;">Proceso productivo sugerido y tolerancias dimensionales alcanzables.</p></li>
+        <li style="counter-increment:q;padding:24px 26px;border-bottom:1px solid rgba(120,180,255,.2);"><div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#6cb6f5;margin-bottom:9px;">P·06</div><p style="margin:0;font-size:15.5px;line-height:1.55;color:#cdd9e6;">Resistencia a impactos, rayos UV e intemperie para uso exterior permanente.</p></li>
+        <li style="counter-increment:q;padding:24px 26px;border-right:1px solid rgba(120,180,255,.2);border-bottom:1px solid rgba(120,180,255,.2);"><div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#6cb6f5;margin-bottom:9px;">P·07</div><p style="margin:0;font-size:15.5px;line-height:1.55;color:#cdd9e6;">Vida útil estimada con ciclos frecuentes de armado y desarmado de los encastres.</p></li>
+        <li style="counter-increment:q;padding:24px 26px;border-bottom:1px solid rgba(120,180,255,.2);"><div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#6cb6f5;margin-bottom:9px;">P·08</div><p style="margin:0;font-size:15.5px;line-height:1.55;color:#cdd9e6;">Acabados y colores disponibles. ¿Color pasante en masa o pintado?</p></li>
+        <li style="counter-increment:q;padding:24px 26px;border-right:1px solid rgba(120,180,255,.2);"><div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#6cb6f5;margin-bottom:9px;">P·09</div><p style="margin:0;font-size:15.5px;line-height:1.55;color:#cdd9e6;">Tiempos estimados de prototipado y de producción en serie.</p></li>
+        <li style="padding:24px 26px;background:rgba(21,116,212,.12);display:flex;flex-direction:column;justify-content:center;"><div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;color:#6cb6f5;text-transform:uppercase;margin-bottom:8px;">Contacto</div><p style="margin:0;font-size:15px;line-height:1.5;color:#cdd9e6;">Proyecto MINIPÁDEL · PM-01<br><span style="color:#7e93a9;">[nombre · email · teléfono]</span></p></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer style="background:#081019;color:#5e708a;">
+    <div style="max-width:1200px;margin:0 auto;padding:30px 48px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;">
+      <span>MINIPÁDEL · Dossier técnico PM-01</span>
+      <span>Documento confidencial · Para evaluación de proveedores · v0.1 · 2026</span>
+    </div>
+  </footer>
+
+  <sc-if value="{{ hasPdf }}" hint-placeholder-val="{{ false }}">
+    <div onclick="{{ closePdf }}" style="position:fixed;inset:0;z-index:100;background:rgba(8,16,25,.8);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:32px;">
+      <div onclick="{{ stop }}" style="width:min(1080px,100%);height:100%;background:#fff;border:1px solid var(--accent);display:flex;flex-direction:column;box-shadow:0 30px 90px -24px rgba(0,0,0,.7);">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 14px;border-bottom:1px solid var(--line);font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);">
+          <span>Visor de plano — PM-01</span>
+          <div style="display:flex;gap:10px;align-items:center;">
+            <button onclick="{{ downloadPdf }}" style="cursor:pointer;color:var(--ink-2);background:none;border:1px solid var(--line);padding:6px 12px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;">Descargar ↓</button>
+            <button onclick="{{ closePdf }}" style="cursor:pointer;color:#fff;background:var(--accent);border:none;padding:6px 13px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;">Cerrar ✕</button>
+          </div>
+        </div>
+        <div id="pdf-pages" style="flex:1;overflow:auto;width:100%;background:#525659;padding:20px;display:flex;flex-direction:column;align-items:center;gap:16px;"></div>
+      </div>
+    </div>
+  </sc-if>
+
+</div>
+
+<script type="text/x-dc" data-dc-script="" data-props="{&quot;accentColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#1574d4&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  state = { pdfUrl: null };
+  componentDidMount() {
+    this._h = (e) => {
+      const a = e.target.closest('a[href$=".pdf"], a[data-filename]');
+      if (!a) return;
+      e.preventDefault();
+      const href = a.getAttribute('href');
+      const name = a.getAttribute('data-filename') || (href.split('/').pop()) || 'plano.pdf';
+      this.setState({ pdfUrl: href, pdfName: name }, () => this.renderPdf(href));
+    };
+    document.addEventListener('click', this._h);
+    try {
+      var res = window.__resources || {};
+      if (res.model3d) {
+        var mv = document.querySelector('model-viewer');
+        if (mv) mv.setAttribute('src', res.model3d);
+      }
+      var pdfMap = {
+        'assets/planos/base-inferior.pdf':'pdfA',
+        'assets/planos/base-superior-900.pdf':'pdfB',
+        'assets/planos/base-superior-remate-600.pdf':'pdfB2',
+        'assets/planos/esquinero.pdf':'pdfC',
+        'assets/planos/panel-principal.pdf':'pdfD',
+        'assets/planos/panel-reja.pdf':'pdfE'
+      };
+      if (res && Object.keys(res).length) {
+        document.querySelectorAll('a[href$=".pdf"]').forEach(function(a){
+          var h = a.getAttribute('href');
+          var id = pdfMap[h];
+          if (id && res[id]) { a.setAttribute('data-filename', h.split('/').pop()); a.setAttribute('href', res[id]); }
+        });
+      }
+    } catch (e) {}
+  }
+  componentWillUnmount() { document.removeEventListener('click', this._h); }
+  async downloadPdf() {
+    const url = this.state.pdfUrl;
+    if (!url) return;
+    try {
+      const blob = await (await fetch(url)).blob();
+      const obj = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = obj;
+      a.download = this.state.pdfName || (url.split('/').pop() || 'plano.pdf');
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(obj), 2000);
+    } catch (e) {
+      window.open(url, '_blank');
+    }
+  }
+  async renderPdf(url) {
+    const host = document.getElementById('pdf-pages');
+    if (!host) return;
+    host.innerHTML = '<div style="color:#cdd9e6;font-family:monospace;font-size:13px;padding:48px;">Cargando PDF…</div>';
+    let tries = 0;
+    while (!window.pdfjsLib && tries < 60) { await new Promise(r => setTimeout(r, 100)); tries++; }
+    if (!window.pdfjsLib) { host.innerHTML = '<div style="color:#ffb4b4;font-family:monospace;font-size:13px;padding:48px;">No se pudo cargar el visor. Usá «Descargar ↓».</div>'; return; }
+    try {
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc = (window.__resources && window.__resources.pdfWorker) || 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      const pdf = await window.pdfjsLib.getDocument(url).promise;
+      if (this.state.pdfUrl !== url) return;
+      host.innerHTML = '';
+      const width = Math.min(host.clientWidth - 40, 900);
+      for (let n = 1; n <= pdf.numPages; n++) {
+        const page = await pdf.getPage(n);
+        const base = page.getViewport({ scale: 1 });
+        const vp = page.getViewport({ scale: width / base.width });
+        const canvas = document.createElement('canvas');
+        canvas.width = vp.width; canvas.height = vp.height;
+        canvas.style.width = '100%'; canvas.style.maxWidth = width + 'px';
+        canvas.style.boxShadow = '0 6px 22px rgba(0,0,0,.45)';
+        canvas.style.background = '#fff';
+        if (this.state.pdfUrl !== url) return;
+        host.appendChild(canvas);
+        await page.render({ canvasContext: canvas.getContext('2d'), viewport: vp }).promise;
+      }
+    } catch (e) {
+      host.innerHTML = '<div style="color:#ffb4b4;font-family:monospace;font-size:13px;padding:48px;text-align:center;line-height:1.6;">No se pudo mostrar el PDF aquí.<br>Usá «Descargar ↓» para verlo.<br><span style="color:#7e93a9;font-size:11px;">' + (e && e.message ? e.message : e) + '</span></div>';
+    }
+  }
+  renderVals() {
+    return {
+      accent: this.props.accentColor ?? '#1574d4',
+      pdfUrl: this.state.pdfUrl,
+      hasPdf: !!this.state.pdfUrl,
+      closePdf: () => this.setState({ pdfUrl: null }),
+      stop: (e) => e.stopPropagation(),
+      downloadPdf: () => this.downloadPdf()
+    };
+  }
+}
+</script>
+
+
+</body></html>
 </Layout>
