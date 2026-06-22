@@ -422,5 +422,99 @@ import ModelViewer from '../components/ModelViewer.astro';
       <span>Documento confidencial · Para evaluación de proveedores · v0.1 · 2026</span>
     </div>
   </footer>
+
+  <!-- PDF Modal -->
+  <div id="pdf-modal" style="display:none;position:fixed;inset:0;z-index:100;background:rgba(8,16,25,.8);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:32px;">
+    <div style="width:min(1080px,100%);height:100%;background:#fff;border:1px solid var(--accent);display:flex;flex-direction:column;box-shadow:0 30px 90px -24px rgba(0,0,0,.7);" onclick="event.stopPropagation()">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 14px;border-bottom:1px solid var(--line);font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);">
+        <span id="pdf-modal-title">Visor de plano</span>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <button id="pdf-download-btn" style="cursor:pointer;color:var(--ink-2);background:none;border:1px solid var(--line);padding:6px 12px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;">Descargar ↓</button>
+          <button id="pdf-close-btn" style="cursor:pointer;color:#fff;background:var(--accent);border:none;padding:6px 13px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;">Cerrar ✕</button>
+        </div>
+      </div>
+      <div id="pdf-pages" style="flex:1;overflow:auto;width:100%;background:#525659;padding:20px;display:flex;flex-direction:column;align-items:center;gap:16px;"></div>
+    </div>
+  </div>
+
 </div>
+
+<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script is:inline>
+  document.addEventListener('DOMContentLoaded', () => {
+    const modal = document.getElementById('pdf-modal');
+    const closeBtn = document.getElementById('pdf-close-btn');
+    const downloadBtn = document.getElementById('pdf-download-btn');
+    const pagesContainer = document.getElementById('pdf-pages');
+    const title = document.getElementById('pdf-modal-title');
+    let currentPdfUrl = null;
+    let currentPdfName = null;
+
+    const closeModal = () => {
+      modal.style.display = 'none';
+      pagesContainer.innerHTML = '';
+      currentPdfUrl = null;
+    };
+
+    modal.addEventListener('click', closeModal);
+    closeBtn.addEventListener('click', closeModal);
+
+    downloadBtn.addEventListener('click', async () => {
+      if (!currentPdfUrl) return;
+      try {
+        const blob = await (await fetch(currentPdfUrl)).blob();
+        const obj = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = obj;
+        a.download = currentPdfName || 'plano.pdf';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(obj), 2000);
+      } catch (e) {
+        window.open(currentPdfUrl, '_blank');
+      }
+    });
+
+    const renderPdf = async (url) => {
+      pagesContainer.innerHTML = '<div style="color:#cdd9e6;font-family:monospace;font-size:13px;padding:48px;">Cargando PDF…</div>';
+      try {
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        const pdf = await window.pdfjsLib.getDocument(url).promise;
+        if (currentPdfUrl !== url) return;
+        pagesContainer.innerHTML = '';
+        const width = Math.min(pagesContainer.clientWidth - 40, 900);
+        
+        for (let n = 1; n <= pdf.numPages; n++) {
+          const page = await pdf.getPage(n);
+          const base = page.getViewport({ scale: 1 });
+          const vp = page.getViewport({ scale: width / base.width });
+          const canvas = document.createElement('canvas');
+          canvas.width = vp.width; 
+          canvas.height = vp.height;
+          canvas.style.width = '100%'; 
+          canvas.style.maxWidth = width + 'px';
+          canvas.style.boxShadow = '0 6px 22px rgba(0,0,0,.45)';
+          canvas.style.background = '#fff';
+          if (currentPdfUrl !== url) return;
+          pagesContainer.appendChild(canvas);
+          await page.render({ canvasContext: canvas.getContext('2d'), viewport: vp }).promise;
+        }
+      } catch (e) {
+        pagesContainer.innerHTML = '<div style="color:#ffb4b4;font-family:monospace;font-size:13px;padding:48px;text-align:center;line-height:1.6;">No se pudo mostrar el PDF aquí.<br>Usá «Descargar ↓» para verlo.</div>';
+      }
+    };
+
+    document.querySelectorAll('a[href$=".pdf"]').forEach(a => {
+      a.addEventListener('click', (e) => {
+        e.preventDefault();
+        const url = a.getAttribute('href');
+        currentPdfName = url.split('/').pop();
+        currentPdfUrl = url;
+        modal.style.display = 'flex';
+        renderPdf(url);
+      });
+    });
+  });
+</script>
 </Layout>
